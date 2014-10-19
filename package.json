@@ -1,0 +1,17 @@
+{
+    "name": "nodebook-api",
+    "author": "Gabriel Mayta",
+    "main": "server.js",
+    "dependencies": {
+        "express": "~4.0.0",
+        "mongoose": "~3.6.13",
+        "socket.io": "~1.1.0",
+        "body-parser": "~1.0.0",
+        "method-override": "~1.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/gabrielmayta/nodebook-api"
+    },
+    "license": "MIT"
+}
