@@ -5,8 +5,7 @@ var socketio = require('socket.io');
 var http = require('http');
 var app = express();
 
-var server = http.createServer(app);
-var io = socketio.listen(server);
+
 
 var mongo = require('mongoose');
 var nodebook_db = require('./config/database');
@@ -17,6 +16,9 @@ var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var router = express.Router();
 var cors = require('cors');
+
+var server = http.createServer(app);
+var io = socketio.listen(server);
 
 app.set('socketio', io);
 app.set('server', server);

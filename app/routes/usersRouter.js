@@ -1,4 +1,6 @@
 var User = require('../models/usersModel');
+var userConnected = 0;
+
 
 module.exports = function (app, router) {
 
@@ -8,10 +10,11 @@ module.exports = function (app, router) {
             User.find(function (error, users) {
                 if (error)
                     res.status(500);
-                else
+                else {
                     res
                         .status(200)
                         .json({ users: users});
+                }
             });
         })
 
@@ -97,10 +100,18 @@ module.exports = function (app, router) {
             query.exec(function (error, user) {
                 if (error)
                     res.status(500);
-                else if (user.length > 0)
+                else if (user.length > 0) {
+
+                    userConnected++;
+
+                    var socketio = req.app.get('socketio');
+                    socketio.sockets.emit('userConnected', userConnected);
+
                     res
                         .status(200)
                         .json({user: user});
+
+                }
                 else
                     res
                         .status(404)
