@@ -16,14 +16,17 @@ module.exports = function (app, router) {
         })
 
         .post(function (req, res) {
-            var user = new User();
-            var fullname = req.body.firstname + ' ' + req.body.lastname;
-            user.firstname = req.body.firstname;
-            user.lastname = req.body.lastname;
-            user.email = req.body.email;
-            user.password = req.body.password;
 
-            user.save(function (error) {
+            var fullname = req.body.firstname + ' ' + req.body.lastname;
+
+            var query = new User({
+                firstname: req.body.firstname,
+                lastname: req.body.lastname,
+                email: req.body.email,
+                password: req.body.password
+            });
+
+            query.save(function (error) {
                 if (error)
                     res.status(500);
                 else {
@@ -34,35 +37,21 @@ module.exports = function (app, router) {
                         .json({ message: 'Risorsa inserità con successo' });
                 }
             });
+
         });
 
     router.route('/users/:_id')
 
-        .get(function (req, res) {
-            User.find({
-                _id: req.params._id
-            }, function (error, user) {
-                if (error)
-                    res.status(500);
-                else if (user)
-                    res
-                        .status(200)
-                        .json({ user: user});
-                else
-                    res
-                        .status(404)
-                        .json({ message: 'Risorsa non trovata' });
-            });
-        })
-
         .put(function (req, res) {
-            User.update({
-                _id: req.params._id,
+
+            var query = User.findByIdAndUpdate(req.params._id, {
                 firstname: req.body.firstname,
                 lastname: req.body.lastname,
                 email: req.body.email,
                 password: req.body.password
-            }, function (error, success) {
+            });
+
+            query.exec(function (error, success) {
                 if (error)
                     res.status(500);
                 else if (success)
@@ -74,12 +63,14 @@ module.exports = function (app, router) {
                         .status(404)
                         .json({ message: 'Risorsa non trovata' });
             });
+
         })
 
         .delete(function (req, res) {
-            User.remove({
-                _id: req.params._id
-            }, function (error, success) {
+
+            var query = User.remove({_id: req.params._id});
+
+            query.exec(function (error, success) {
                 if (error)
                     res.status(500);
                 else if (success)
@@ -91,24 +82,29 @@ module.exports = function (app, router) {
                         .status(404)
                         .json({ message: 'Risorsa non trovata' });
             });
+
         });
 
     router.route('/users/auth')
+
         .post(function (req, res) {
-            User.find({
+
+            var query = User.find({
                 email: req.body.email,
                 password: req.body.password
-            }, function (error, user) {
+            }).select('email firstname lastname');
+
+            query.exec(function (error, user) {
                 if (error)
                     res.status(500);
-                else if (user)
+                else if (user.length > 0)
                     res
                         .status(200)
-                        .json({ user: user});
+                        .json({user: user});
                 else
                     res
                         .status(404)
-                        .json({ message: 'Risorsa non trovata' });
+                        .json({ message: 'Email e/o password errati!' });
             });
         });
 
